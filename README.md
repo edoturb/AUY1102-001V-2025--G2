@@ -31,13 +31,12 @@ El proyecto integra los siguientes componentes:
 ### 2.1. Clonación y carga del repositorio
 
 Se clonó el repositorio base proporcionado por la docente:
-
+```markdown
 ```bash
 git clone https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline.git
 Posteriormente, se eliminó el historial .git del proyecto y se inicializó uno nuevo, agregando el repositorio del grupo:
 
-bash
-Copiar código
+
 rm -rf .git
 git init
 git add .
@@ -45,6 +44,7 @@ git commit -m "Versión inicial sin credenciales"
 git branch -M main
 git remote add origin https://github.com/edoturb/AUY1102-001V-2025--G2.git
 git push -u origin main --force
+```
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/f9ec2dfdc15447733f5ea6860508d091f8c1d0ad/Clonacion%20Edu.png)
 
 
