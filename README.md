@@ -1,4 +1,4 @@
-<img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/DuocUC_logo.svg" alt="Duoc UC Logo" width="140" align="left" />
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/logo_duoc.png?raw=true)
 
 <br clear="left"/>
 
