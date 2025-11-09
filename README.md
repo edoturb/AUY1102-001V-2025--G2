@@ -45,7 +45,8 @@ git commit -m "Versión inicial sin credenciales"
 git branch -M main
 git remote add origin https://github.com/edoturb/AUY1102-001V-2025--G2.git
 git push -u origin main --force
-📸 Evidencia: Captura del proceso de clonación e inicialización del repositorio.
+<img width="940" height="529" alt="image" src="https://github.com/user-attachments/assets/1ceda4a8-f672-4fe2-b4f0-44d909fe4c4b" />
+
 
 2.2. Colaboración y control de cambios
 Lucía Villalobos: ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
