@@ -84,78 +84,86 @@ Sacaremos ese secreto del commit y recién ahí volvelveromos a hacer push.
 
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/commit%20y%20push.png?raw=true)
 
-2.2. Colaboración y control de cambios
-Lucía Villalobos: ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
+Con esto, el commit viejo (que tenía el supuesto secreto) deja de existir; ahora el último commit ya viene limpio.
 
-Eduardo Urbina: configuración y ejecución de herramientas de seguridad (Dependabot, CodeQL, SonarQube) y aplicación de remediaciones.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen10.png?raw=true)
 
-Todos los commits y sincronizaciones se realizaron utilizando comandos Git (add, commit, push, pull), garantizando trazabilidad y control de versiones.
+(forced update) → el push forzado funcionó (reemplazó la historia anterior).
 
-📸 Evidencia: Historial de commits y cambios en GitHub.
+No hay advertencias de secretos ni errores de protección 🚫🔑.
+Logramos subir correctamente el código base del proyecto a nuestro repositorio de grupo
 
-3. Fase 2 – Pruebas unitarias y cobertura de código
-3.1. Instalación de dependencias
-Se ejecutó el siguiente comando para instalar los paquetes necesarios:
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen11.png?raw=true)
 
-bash
-Copiar código
-npm install
+
+
+## 3. Fase 2 – Colaboración y control de cambios
+**Lucía Villalobos:** ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
+
+**Eduardo Urbina:** configuración y ejecución de herramientas de seguridad (Dependabot, CodeQL, SonarQube) y aplicación de remediaciones.
+
+
+**3.1. Pruebas unitarias y cobertura de código**
+
+Instalación de dependencias:
+
+Se ejecutó el siguiente comando para instalar los paquetes necesarios.
+
 Durante la instalación, npm reportó varias vulnerabilidades en dependencias externas, lo cual permitió posteriormente aplicar herramientas de análisis y remediación.
 
-📸 Evidencia: Captura del resultado de instalación con listado de vulnerabilidades detectadas.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen13.png?raw=true)
 
-3.2. Ejecución de pruebas unitarias
+**3.2. Ejecución de pruebas unitarias**
+
 Las pruebas unitarias fueron ejecutadas con Jest mediante:
 
-bash
-Copiar código
-npm run test:unit
+**npm run test:unit**
+
 Resultado general:
 
-Test Suites: 10 passed / 10 total
-
-Tests: 18 passed / 18 total
-
-Incluye prueba personalizada sumar.test.ts.
+- Test Suites: 10 passed / 10 total
+- Tests: 18 passed / 18 total
+- Incluye prueba personalizada sumar.test.ts.
 
 Durante la ejecución se detectaron advertencias relacionadas con fetch hacia api.example.com, sin impacto en la ejecución.
 
-📸 Evidencia: Captura del resultado completo de npm run test:unit.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen14.png?raw=true)
 
-3.3. Análisis de cobertura
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen15.png?raw=true)
+
+**3.3. Análisis de cobertura**
+
 Se midió la cobertura total del código con:
 
-bash
-Copiar código
-npm run test:coverage
+**npm run test:coverage**
+
 Resultados obtenidos:
 
-Statements: 43.28 %
+- Statements: 43.28 %
+- Branches: 60 %
+- Functions: 56.66 %
+- Lines: 43.28 %
 
-Branches: 60 %
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen16.png?raw=true)
 
-Functions: 56.66 %
-
-Lines: 43.28 %
-
-📸 Evidencia: Captura de la tabla de cobertura generada por Jest.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen17.png?raw=true)
 
 Este reporte permitió identificar áreas del código sin cobertura de pruebas, apoyando la mejora continua del desarrollo.
 
-4. Fase 3 – Metodologías de prueba (TDD y BDD)
-4.1. Ejemplo implementado
+## 4. Fase 3 – Metodologías de prueba (TDD y BDD)
+
+**4.1. Ejemplo implementado**
+
 Se creó una función simple para ejemplificar TDD y BDD:
 
-ts
-Copiar código
 // src/sumar.ts
 export function sumar(a: number, b: number): number {
   return a + b;
 }
+
 Y su prueba unitaria:
 
-ts
-Copiar código
+
 // test/sumar.test.ts
 import { sumar } from "../src/sumar";
 
@@ -170,20 +178,25 @@ describe("sumar()", () => {
     expect(sumar(10, 5)).toBe(15);
   });
 });
-📸 Evidencia: Captura de ejecución de Jest con los resultados del test sumar.test.ts.
 
-4.2. Análisis
-TDD: permitió diseñar el código guiado por las pruebas, aplicando el ciclo Red → Green → Refactor.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen18.png?raw=true)
 
-BDD: permitió expresar el comportamiento esperado en un lenguaje más cercano al negocio.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen19.png?raw=true)
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen20.png?raw=true)
+
+
+**4.2. Análisis**
+
+**TDD:** permitió diseñar el código guiado por las pruebas, aplicando el ciclo Red → Green → Refactor.
+
+**BDD:** permitió expresar el comportamiento esperado en un lenguaje más cercano al negocio.
 
 Ambos enfoques promueven un desarrollo más confiable y orientado a calidad.
 
-5. Fase 4 – Análisis de calidad del código (ESLint)
+## 5. Fase 4 – Análisis de calidad del código (ESLint)
 Se utilizó ESLint para revisar la calidad del código:
 
-bash
-Copiar código
 npx eslint .
 Inicialmente, se presentó el error:
 
@@ -191,14 +204,12 @@ ESLint couldn't find the config "airbnb-typescript/base" to extend from.
 
 Para resolverlo, se instalaron las dependencias necesarias:
 
-bash
-Copiar código
 npm install -D eslint eslint-config-airbnb-typescript eslint-config-airbnb-base eslint-plugin-import @typescript-eslint/eslint-plugin @typescript-eslint/parser
 Aun así, la configuración continuó arrojando advertencias, pero permitió comprender el propósito del análisis estático de código en el ciclo de desarrollo.
 
 📸 Evidencia: Captura de instalación y salida del comando ESLint.
 
-6. Fase 5 – Análisis de vulnerabilidades y seguridad
+## 6. Fase 5 – Análisis de vulnerabilidades y seguridad
 6.1. Dependabot
 Se habilitaron Dependabot Alerts y Security Updates en GitHub, generando reportes automáticos de vulnerabilidades en las dependencias del proyecto.
 
@@ -215,7 +226,7 @@ El análisis detectó vulnerabilidades de severidad medium y low, además de rec
 
 📸 Evidencia: Capturas del panel de SonarQube con los reportes de vulnerabilidades y métricas de calidad.
 
-7. Fase 6 – Remediaciones realizadas
+## 7. Fase 6 – Remediaciones realizadas
 Se aplicaron las siguientes acciones correctivas:
 
 Se aceptó una actualización automática de Dependabot para una librería Node.js vulnerable, mitigando una alerta moderate.
@@ -226,7 +237,7 @@ Se mantuvieron activas las actualizaciones automáticas de seguridad para preven
 
 📸 Evidencia: Captura del Pull Request de Dependabot y nuevo reporte post-remediación.
 
-8. Conclusiones
+## 8. Conclusiones
 El trabajo permitió consolidar la comprensión del ciclo de vida del software aplicado a pruebas, calidad y seguridad.
 
 Se comprobó el valor de las metodologías TDD y BDD para crear código robusto y comprobable.
