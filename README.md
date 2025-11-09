@@ -55,8 +55,20 @@ Clonación Lucia
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Clonacion%20Lucy.png?raw=true)
 
 
-origin apunta al repo de la profe
+Origin apunta al repo de la profe:
 
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote.png?raw=true)
+
+
+Borramos el origin actual:
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote%20-v.png?raw=true)
+
+
+
+2.	Añade el remoto nuevo, del grupo:
+
+![image alt]()
 
 
 2.2. Colaboración y control de cambios
