@@ -167,6 +167,23 @@ jobs:
 ```
 <br>
 
+## 4 – Análisis de vulnerabilidades
+
+Herramientas utilizadas:
+- **Dependabot**: se habilitaron alerts y security updates para monitorear dependencias de npm.
+- **CodeQL**: se configuró code scanning para analizar el código TypeScript/JavaScript.
+- **Snyk**: se vinculó el repositorio y se ejecutó un escaneo de vulnerabilidades.
+
+Principales hallazgos:
+- Paquetes desactualizados y con vulnerabilidades de severidad *low*, *moderate* y *high*.
+
+### Remediaciones realizadas
+
+- Se aceptó un PR de Dependabot que actualiza la dependencia `XYZ` a una versión segura.
+- Se volvió a ejecutar el análisis, reduciendo el número de vulnerabilidades reportadas.
+
+<br>
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](./LICENSE)
