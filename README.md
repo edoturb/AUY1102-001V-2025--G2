@@ -156,10 +156,12 @@ Este reporte permitió identificar áreas del código sin cobertura de pruebas, 
 
 Se creó una función simple para ejemplificar TDD y BDD:
 
+```ts
 // src/sumar.ts
 export function sumar(a: number, b: number): number {
   return a + b;
 }
+
 
 Y su prueba unitaria:
 
@@ -179,14 +181,23 @@ describe("sumar()", () => {
   });
 });
 
+```
+
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen18.png?raw=true)
 
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen19.png?raw=true)
 
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen20.png?raw=true)
 
+**4.2. Corrimos nuevamente las pruebas**
 
-**4.2. Análisis**
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen20.png?raw=true)
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen21.png?raw=true)
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen22.png?raw=true)
+
+**4.3. Análisis**
 
 **TDD:** permitió diseñar el código guiado por las pruebas, aplicando el ciclo Red → Green → Refactor.
 
@@ -207,49 +218,108 @@ Para resolverlo, se instalaron las dependencias necesarias:
 npm install -D eslint eslint-config-airbnb-typescript eslint-config-airbnb-base eslint-plugin-import @typescript-eslint/eslint-plugin @typescript-eslint/parser
 Aun así, la configuración continuó arrojando advertencias, pero permitió comprender el propósito del análisis estático de código en el ciclo de desarrollo.
 
-📸 Evidencia: Captura de instalación y salida del comando ESLint.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen41.png?raw=true)
 
 ## 6. Fase 5 – Análisis de vulnerabilidades y seguridad
-6.1. Dependabot
+
+**6.1. Dependabot**
+
 Se habilitaron Dependabot Alerts y Security Updates en GitHub, generando reportes automáticos de vulnerabilidades en las dependencias del proyecto.
 
-📸 Evidencia: Captura del panel de alertas de Dependabot.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen23.png?raw=true)
 
-6.2. CodeQL Analysis
-Se configuró CodeQL desde la pestaña Security → Code scanning, generando análisis automáticos en cada push.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen24.png?raw=true)
 
-📸 Evidencia: Captura de las alertas y resultados del análisis CodeQL.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen25.png?raw=true)
 
-6.3. SonarQube Cloud
-Eduardo configuró SonarQube Cloud, integrando el repositorio con un análisis externo de vulnerabilidades y calidad de código.
+
+
+
+
+**6.2. CodeQL Analysis**
+
+Configuramos CodeQL desde la pestaña Security 
+
+→ Code scanning, generando análisis automáticos en cada push.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen26.png?raw=true)
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen%2027.png?raw=true)
+
+Nueva configuración lista
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen28.png?raw=true)
+
+Se configuró GitHub CodeQL para análisis automatizado del código fuente.
+El flujo realiza escaneos cada 1 hora. Se activo Dependabot alerts y security updates
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen%2029.png?raw=true)
+
+
+
+
+**6.3. SonarQube Cloud**
+
+Configuramos SonarQube Cloud, integrando el repositorio con un análisis externo de vulnerabilidades y calidad de código.
+
 El análisis detectó vulnerabilidades de severidad medium y low, además de recomendaciones de estilo y complejidad.
 
-📸 Evidencia: Capturas del panel de SonarQube con los reportes de vulnerabilidades y métricas de calidad.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen30.png?raw=true
+)
 
-## 7. Fase 6 – Remediaciones realizadas
-Se aplicaron las siguientes acciones correctivas:
+Vulnerabilidades detectadas
 
-Se aceptó una actualización automática de Dependabot para una librería Node.js vulnerable, mitigando una alerta moderate.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen31.png?raw=true)
 
-Se ejecutó nuevamente CodeQL y SonarQube, observándose una reducción en la cantidad de alertas activas.
+Detecta una critica, token en archivo npm
 
-Se mantuvieron activas las actualizaciones automáticas de seguridad para prevenir futuros riesgos.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen32.png?raw=true)
 
-📸 Evidencia: Captura del Pull Request de Dependabot y nuevo reporte post-remediación.
+Eliminamos Token sensible  desde archivo .npmrc
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen33.png?raw=true)
+
+
+Tras la detección de las vulnerabilidades y problemas de mantenibilidad, se procedió a aplicar las siguientes **acciones correctivas** para mejorar la calidad y seguridad del proyecto:
+
+### **7.1. Revocación y reemplazo del token de GitHub**
+Se revocó el token comprometido y se generó un nuevo **Personal Access Token (PAT)** desde la configuración de GitHub, eliminando toda referencia al anterior.  
+El nuevo token fue almacenado de forma segura mediante una variable de entorno en el archivo `~/.zshrc`, siguiendo las buenas prácticas de seguridad recomendadas.
+
+- ![Generación de nuevo token en GitHub](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen35.png?raw=true)
+- ![Configuración del token como variable de entorno](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen36.png?raw=true)
+
+### **7.2. Limpieza del archivo `.npmrc`**
+Se eliminó la línea que contenía el token expuesto y se reemplazó por una configuración segura sin credenciales directas.  
+Esto permitió eliminar la alerta de seguridad clasificada como **Blocker**.
+
+- ![Archivo .npmrc corregido](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen34.png?raw=true)
+
+### **7.3. Corrección de métodos vacíos (Code Smells)**
+En el archivo `src/quality/errores-object.ts`, SonarQube marcó los métodos `getUserData()` y `sendEmail()` como vacíos.  
+Para resolver el problema, se agregó un comentario `//TODO` dentro del método, dejando explícita la intención de implementación futura. Esto elimina el error sin afectar la lógica del programa.
+
+- ![Corrección de métodos vacíos](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen39.png?raw=true)
+- ![Commit de remediación](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen40.png?raw=true)
+
+### **7.4. Confirmación de remediaciones**
+Finalmente, se ejecutó un nuevo análisis en **SonarQube Cloud**, verificando que las vulnerabilidades críticas habían sido mitigadas y las observaciones de mantenibilidad disminuidas, cumpliendo así con las políticas de calidad establecidas en el proyecto.
+
+
 
 ## 8. Conclusiones
-El trabajo permitió consolidar la comprensión del ciclo de vida del software aplicado a pruebas, calidad y seguridad.
 
-Se comprobó el valor de las metodologías TDD y BDD para crear código robusto y comprobable.
+- El trabajo permitió consolidar la comprensión del ciclo de vida del software aplicado a pruebas, calidad y seguridad.
 
-El uso de herramientas automáticas como ESLint, Dependabot, CodeQL y SonarQube facilita el aseguramiento de la calidad y la detección temprana de vulnerabilidades.
+- Se comprobó el valor de las metodologías TDD y BDD para crear código robusto y comprobable.
 
-El control de versiones con Git y GitHub fue esencial para la colaboración y trazabilidad del proyecto.
+- El uso de herramientas automáticas como ESLint, Dependabot, CodeQL y SonarQube facilita el aseguramiento de la calidad y la detección temprana de vulnerabilidades.
 
-En conjunto, se logró un flujo de desarrollo alineado con las buenas prácticas de la industria, abarcando desde la planificación hasta la mejora continua.
+- El control de versiones con Git y GitHub fue esencial para la colaboración y trazabilidad del proyecto.
+
+- En conjunto, se logró un flujo de desarrollo alineado con las buenas prácticas de la industria, abarcando desde la planificación hasta la mejora continua.
 
 📘 Repositorio oficial del grupo:
 https://github.com/edoturb/AUY1102-001V-2025--G2
 
-yaml
-Copiar código
+
