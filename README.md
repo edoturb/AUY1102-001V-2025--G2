@@ -45,7 +45,8 @@ git commit -m "Versión inicial sin credenciales"
 git branch -M main
 git remote add origin https://github.com/edoturb/AUY1102-001V-2025--G2.git
 git push -u origin main --force
-![Evidencia fase 1](https://github.com/user-attachments/assets/1ceda4a8-f672-4fe2-b4f0-44d909fe4c4b)
+<img width="940" height="529" alt="image" src="https://github.com/user-attachments/assets/d2d11752-ded9-4df4-9914-23f00089a38f" />
+
 
 
 
