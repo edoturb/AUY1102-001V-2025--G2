@@ -45,7 +45,7 @@ git commit -m "Versión inicial sin credenciales"
 git branch -M main
 git remote add origin https://github.com/edoturb/AUY1102-001V-2025--G2.git
 git push -u origin main --force
-![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Clonacion%20Edu.png?raw=true)
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/f9ec2dfdc15447733f5ea6860508d091f8c1d0ad/Clonacion%20Edu.png)
 
 
 
