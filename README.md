@@ -55,6 +55,10 @@ Clonación Lucia
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Clonacion%20Lucy.png?raw=true)
 
 
+origin apunta al repo de la profe
+
+
+
 2.2. Colaboración y control de cambios
 Lucía Villalobos: ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
 
