@@ -76,7 +76,7 @@ Remonbramos rama master por main para tener buenas practias y más estándar
 
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/master%20a%20main.png?raw=true)
 
-No nos dejo hacer push porque dentro del commit hay un archivo credentials.yml con algo en la línea 1 que parece un token de GitHub”.
+No nos dejo hacer push porque dentro del commit hay un archivo **credentials.yml** con algo en la línea 1 que parece un token de GitHub”.
 
 Aunque ya borramos el .git viejo, en este nuevo commit todavía está ese credentials.yml con algo **sospechoso**.
 
