@@ -65,11 +65,12 @@ Borramos el origin actual:
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote%20-v.png?raw=true)
 
 
+Añade el remoto nuevo, del grupo:
 
-2.	Añade el remoto nuevo, del grupo:
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote%20add%20origin.png?raw=true)
 
-![image alt]()
 
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20status.png?raw=true)
 
 2.2. Colaboración y control de cambios
 Lucía Villalobos: ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
