@@ -72,6 +72,18 @@ Añade el remoto nuevo, del grupo:
 
 ![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20status.png?raw=true)
 
+Remonbramos rama master por main para tener buenas practias y más estándar
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/master%20a%20main.png?raw=true)
+
+No nos dejo hacer push porque dentro del commit hay un archivo credentials.yml con algo en la línea 1 que parece un token de GitHub”.
+
+Aunque ya borramos el .git viejo, en este nuevo commit todavía está ese credentials.yml con algo **sospechoso**.
+
+Sacaremos ese secreto del commit y recién ahí volvelveromos a hacer push.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/commit%20y%20push.png?raw=true)
+
 2.2. Colaboración y control de cambios
 Lucía Villalobos: ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
 
