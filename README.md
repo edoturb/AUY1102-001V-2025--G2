@@ -1,202 +1,207 @@
-# Github NPM Registry
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/DuocUC_logo.svg" alt="Duoc UC Logo" width="140" align="left" />
 
-## About this article
+<br clear="left"/>
 
-GitHub with GitHubActions and GHAS offer an incredible experience for developers around the planet. Just with a few considerations and good ideas we can build a wonderful experience for our development teams, and they just literally "work only on their code"
+# Evaluación Parcial 2  
+## Desarrollo de Pruebas Unitarias y Análisis de Seguridad II  
 
-## Using Github NPM Registry - Local Environment
+**Asignatura:** Ciclo de Vida del Software I – Sección 001V  
+**Integrantes:** Lucía Villalobos – Eduardo Urbina  
+**Docente:** Valentina Paz  
+**Fecha de entrega:** 09 de noviembre de 2025  
 
-### Authenticating to the NPM Registry
+---
 
-1. Setting your [access token](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages#about-scopes-and-permissions-for-package-registries), to enable GitHub functions like an OAuth access token and authenticates the access to the GitHub API.
+## 1. Objetivo de la evaluación
 
-    Select the ```read:packages``` scope to download container images and read their metadata.
+El propósito de esta evaluación es aplicar los conocimientos del ciclo de vida del software, centrando el trabajo en la creación, ejecución y análisis de pruebas unitarias, junto con la evaluación de seguridad mediante herramientas automáticas.  
+El proyecto integra los siguientes componentes:
 
-    Select the ```write:packages``` scope to download and upload container images and read and write their metadata.
+- Uso de **Git y GitHub** como herramientas de control de versiones.  
+- Implementación de **pruebas unitarias y de cobertura** con Jest.  
+- Aplicación de metodologías **TDD (Test Driven Development)** y **BDD (Behavior Driven Development)**.  
+- Ejecución de análisis de calidad con **ESLint**.  
+- Evaluación de vulnerabilidades con **Dependabot**, **CodeQL Analysis** y **SonarQube Cloud**.  
+- Aplicación de remediaciones y verificación posterior de seguridad.
 
-    Select the ```delete:packages``` scope to delete container images.
+---
 
-2. To authenticate by adding your personal access token to your ~/.npmrc file, edit the ~/.npmrc file for your project to include the following line, replacing TOKEN with your personal access token. Create a new ~/.npmrc file if one doesn't exist.
+## 2. Fase 1 – Control de versiones con Git y GitHub
 
-    ```
-    //npm.pkg.github.com/:_authToken=TOKEN
-    ```
-3. To authenticate by logging in to npm, use the ```npm login``` command, replacing USERNAME with your GitHub username, TOKEN with your personal access token, and PUBLIC-EMAIL-ADDRESS with your email address.
+### 2.1. Clonación y carga del repositorio
 
-If GitHub Packages is not your default package registry for using npm and you want to use the ```npm audit``` command, we recommend you use the ```--scope``` flag with the owner of the package when you authenticate to GitHub Packages.
+Se clonó el repositorio base proporcionado por la docente:
 
-```
-  $ npm login --scope=@OWNER --registry=https://npm.pkg.github.com
-  > Username: USERNAME
-  > Password: TOKEN
-  > Email: PUBLIC-EMAIL-ADDRESS
-```
+```bash
+git clone https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline.git
+Posteriormente, se eliminó el historial .git del proyecto y se inicializó uno nuevo, agregando el repositorio del grupo:
 
-### Pushing packages
+bash
+Copiar código
+rm -rf .git
+git init
+git add .
+git commit -m "Versión inicial sin credenciales"
+git branch -M main
+git remote add origin https://github.com/edoturb/AUY1102-001V-2025--G2.git
+git push -u origin main --force
+📸 Evidencia: Captura del proceso de clonación e inicialización del repositorio.
 
-#### Publishing a package using a local .npmrc file
+2.2. Colaboración y control de cambios
+Lucía Villalobos: ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
 
-You can use an .npmrc file to configure the scope mapping for your project. In the .npmrc file, use the GitHub Packages URL and account owner so GitHub Packages knows where to route package requests. Using an .npmrc file prevents other developers from accidentally publishing the package to npmjs.org instead of GitHub Packages.
+Eduardo Urbina: configuración y ejecución de herramientas de seguridad (Dependabot, CodeQL, SonarQube) y aplicación de remediaciones.
 
-1. Authenticate to GitHub Packages. For more information, see "[Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)."
-2. In the same directory as your ```package.json``` file, create or edit an ```.npmrc``` file to include a line specifying GitHub Packages URL and the account owner. Replace ```OWNER``` with the name of the user or organization account that owns the repository containing your project.
+Todos los commits y sincronizaciones se realizaron utilizando comandos Git (add, commit, push, pull), garantizando trazabilidad y control de versiones.
 
-    ```
-    @OWNER:registry=https://npm.pkg.github.com
-    ```
+📸 Evidencia: Historial de commits y cambios en GitHub.
 
-3. Add the .npmrc file to the repository where GitHub Packages can find your project. For more information, see "[Adding a file to a repository](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)."
+3. Fase 2 – Pruebas unitarias y cobertura de código
+3.1. Instalación de dependencias
+Se ejecutó el siguiente comando para instalar los paquetes necesarios:
 
-    **NOTE**: Include on [```.gitignore```](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files) the exclusion of .npmrc to not compromise security.
+bash
+Copiar código
+npm install
+Durante la instalación, npm reportó varias vulnerabilidades en dependencias externas, lo cual permitió posteriormente aplicar herramientas de análisis y remediación.
 
-4. Verify the name of your package in your project's package.json. The name field must contain the scope and the ```name``` of the package. For example, if your package is called "test", and you are publishing to the "My-org" GitHub organization, the ```name``` field in your package.json should be ```@my-org/test```.
+📸 Evidencia: Captura del resultado de instalación con listado de vulnerabilidades detectadas.
 
-5. Verify the repository field in your project's package.json. The ```repository``` field must match the URL for your GitHub ```repository```. For example, if your repository URL is ```github.com/my-org/test``` then the repository field should be ```https://github.com/my-org/test.git```.
+3.2. Ejecución de pruebas unitarias
+Las pruebas unitarias fueron ejecutadas con Jest mediante:
 
-6. Publish the package:
+bash
+Copiar código
+npm run test:unit
+Resultado general:
 
-    ```
-    $ npm publish
-    ```
+Test Suites: 10 passed / 10 total
 
-#### Publishing a package using publishConfig in the package.json file
+Tests: 18 passed / 18 total
 
-You can use ```publishConfig``` element in the package.json file to specify the registry where you want the package published. For more information, see "[publishConfig](https://docs.npmjs.com/files/package.json#publishconfig)" in the npm documentation.
+Incluye prueba personalizada sumar.test.ts.
 
-1. Edit the package.json file for your package and include a ```publishConfig``` entry.
+Durante la ejecución se detectaron advertencias relacionadas con fetch hacia api.example.com, sin impacto en la ejecución.
 
-```
-"publishConfig": {
-  "registry":"https://npm.pkg.github.com"
-},
-```
+📸 Evidencia: Captura del resultado completo de npm run test:unit.
 
-2. Verify the ```repository``` field in your project's package.json. The ```repository``` field must match the URL for your GitHub repository. For example, if your repository URL is ```github.com/my-org/test``` then the repository field should be ```https://github.com/my-org/test.git```
+3.3. Análisis de cobertura
+Se midió la cobertura total del código con:
 
-3. Publish the package:
+bash
+Copiar código
+npm run test:coverage
+Resultados obtenidos:
 
-      ```
-      $ npm publish
-      ```
-To discover every way to working with [NPM Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) please generete and **ISSUE**.
+Statements: 43.28 %
 
-<br>
+Branches: 60 %
 
-## Using Github Container Registry - Github Action
-<br>
+Functions: 56.66 %
 
-```
-name: Create and publish NPM Package
-on:
-  release:
-    types: [published]
+Lines: 43.28 %
 
-jobs:
-  Publish-NPM-Package:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache-dependency-path: package-lock.json
-          registry-url: https://npm.pkg.github.com
-      - run: npm install
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.PAT_GITHUB_TOKEN}}
-```
-```
-name: NPM Audit
-on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
+📸 Evidencia: Captura de la tabla de cobertura generada por Jest.
 
-jobs:
-  npm-audit:
-    name: npm audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: install dependencies
-        run: npm ci
-      - uses: oke-py/npm-audit-action@v2
-        with:
-          audit_level: moderate
-          github_token: ${{ secrets.PAT_GITHUB_TOKEN }}
-          issue_assignees: oke-py
-          issue_labels: vulnerability,test
-          dedupe_issues: true
-```
+Este reporte permitió identificar áreas del código sin cobertura de pruebas, apoyando la mejora continua del desarrollo.
 
-To enable more capabilities and demostrate the strongest of Github and Github Actions we complement this example with [Github Reusable Workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows) using Open Source Tools and Enterprise Tools on Actions.
+4. Fase 3 – Metodologías de prueba (TDD y BDD)
+4.1. Ejemplo implementado
+Se creó una función simple para ejemplificar TDD y BDD:
 
-Reusing workflows avoids duplication. This makes workflows easier to maintain and allows you to create new workflows more quickly by building on the work of others, just as you do with actions. Workflow reuse also promotes best practice by helping you to use workflows that are well designed, have already been tested, and have been proved to be effective. Your organization can build up a library of reusable workflows that can be centrally maintained.
+ts
+Copiar código
+// src/sumar.ts
+export function sumar(a: number, b: number): number {
+  return a + b;
+}
+Y su prueba unitaria:
 
-**Note:** To enable your actions, in some cases you must configurate [encrypted secrets](https://docs.github.com/en/enterprise-cloud@latest/actions/security-guides/encrypted-secrets)
+ts
+Copiar código
+// test/sumar.test.ts
+import { sumar } from "../src/sumar";
 
-<br>
+describe("sumar()", () => {
+  // TDD: prueba definida antes de la implementación
+  it("debería devolver la suma de dos números", () => {
+    expect(sumar(2, 3)).toBe(5);
+  });
 
-```
-name: Github Reusable Workflow
-on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
-  release:
-    types: [published]
+  // BDD: descripción del comportamiento esperado
+  it("Given two positive numbers, when I call sumar, then I get their sum", () => {
+    expect(sumar(10, 5)).toBe(15);
+  });
+});
+📸 Evidencia: Captura de ejecución de Jest con los resultados del test sumar.test.ts.
 
-jobs:
-  NPM-Audit:
-    if: github.event_name != 'opened'
-    uses: ./.github/workflows/npm-audit.yml
-    secrets:
-      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
-  
-  NPM-Publish:
-    if: ${{ (github.event.release.action == 'released') && always() }}
-    uses: ./.github/workflows/npm-registry.yml
-    needs: [NPM-Audit]
-    secrets:
-      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
-```
-<br>
+4.2. Análisis
+TDD: permitió diseñar el código guiado por las pruebas, aplicando el ciclo Red → Green → Refactor.
 
-## 4 – Análisis de vulnerabilidades
+BDD: permitió expresar el comportamiento esperado en un lenguaje más cercano al negocio.
 
-Herramientas utilizadas:
-- **Dependabot**: se habilitaron alerts y security updates para monitorear dependencias de npm.
-- **CodeQL**: se configuró code scanning para analizar el código TypeScript/JavaScript.
-- **Snyk**: se vinculó el repositorio y se ejecutó un escaneo de vulnerabilidades.
+Ambos enfoques promueven un desarrollo más confiable y orientado a calidad.
 
-Principales hallazgos:
-- Paquetes desactualizados y con vulnerabilidades de severidad *low*, *moderate* y *high*.
+5. Fase 4 – Análisis de calidad del código (ESLint)
+Se utilizó ESLint para revisar la calidad del código:
 
-### Remediaciones realizadas
+bash
+Copiar código
+npx eslint .
+Inicialmente, se presentó el error:
 
-- Se aceptó un PR de Dependabot que actualiza la dependencia `XYZ` a una versión segura.
-- Se volvió a ejecutar el análisis, reduciendo el número de vulnerabilidades reportadas.
+ESLint couldn't find the config "airbnb-typescript/base" to extend from.
 
-<br>
+Para resolverlo, se instalaron las dependencias necesarias:
 
-## License
+bash
+Copiar código
+npm install -D eslint eslint-config-airbnb-typescript eslint-config-airbnb-base eslint-plugin-import @typescript-eslint/eslint-plugin @typescript-eslint/parser
+Aun así, la configuración continuó arrojando advertencias, pero permitió comprender el propósito del análisis estático de código en el ciclo de desarrollo.
 
-The scripts and documentation in this project are released under the [MIT License](./LICENSE)
-## Contributions
+📸 Evidencia: Captura de instalación y salida del comando ESLint.
 
-Contributions are welcome! read our [Contributor's Guide](./docs/CONTRIBUTING.md)
+6. Fase 5 – Análisis de vulnerabilidades y seguridad
+6.1. Dependabot
+Se habilitaron Dependabot Alerts y Security Updates en GitHub, generando reportes automáticos de vulnerabilidades en las dependencias del proyecto.
 
-## Code of Conduct
+📸 Evidencia: Captura del panel de alertas de Dependabot.
 
-👋 Be nice. See our [code of conduct](./docs/code_of_conduct.md)
+6.2. CodeQL Analysis
+Se configuró CodeQL desde la pestaña Security → Code scanning, generando análisis automáticos en cada push.
 
-## References
+📸 Evidencia: Captura de las alertas y resultados del análisis CodeQL.
 
-+ **NPM Publish:** https://github.com/actions/setup-node
-+ **NPM Audit Signatures:** https://github.blog/changelog/2022-07-26-a-new-npm-audit-signatures-command-to-verify-npm-package-integrity/
-+ **NPM Audit:** https://github.com/marketplace/actions/npm-audit-action
+6.3. SonarQube Cloud
+Eduardo configuró SonarQube Cloud, integrando el repositorio con un análisis externo de vulnerabilidades y calidad de código.
+El análisis detectó vulnerabilidades de severidad medium y low, además de recomendaciones de estilo y complejidad.
+
+📸 Evidencia: Capturas del panel de SonarQube con los reportes de vulnerabilidades y métricas de calidad.
+
+7. Fase 6 – Remediaciones realizadas
+Se aplicaron las siguientes acciones correctivas:
+
+Se aceptó una actualización automática de Dependabot para una librería Node.js vulnerable, mitigando una alerta moderate.
+
+Se ejecutó nuevamente CodeQL y SonarQube, observándose una reducción en la cantidad de alertas activas.
+
+Se mantuvieron activas las actualizaciones automáticas de seguridad para prevenir futuros riesgos.
+
+📸 Evidencia: Captura del Pull Request de Dependabot y nuevo reporte post-remediación.
+
+8. Conclusiones
+El trabajo permitió consolidar la comprensión del ciclo de vida del software aplicado a pruebas, calidad y seguridad.
+
+Se comprobó el valor de las metodologías TDD y BDD para crear código robusto y comprobable.
+
+El uso de herramientas automáticas como ESLint, Dependabot, CodeQL y SonarQube facilita el aseguramiento de la calidad y la detección temprana de vulnerabilidades.
+
+El control de versiones con Git y GitHub fue esencial para la colaboración y trazabilidad del proyecto.
+
+En conjunto, se logró un flujo de desarrollo alineado con las buenas prácticas de la industria, abarcando desde la planificación hasta la mejora continua.
+
+📘 Repositorio oficial del grupo:
+https://github.com/edoturb/AUY1102-001V-2025--G2
+
+yaml
+Copiar código
