@@ -307,17 +307,18 @@ Finalmente, se ejecutó un nuevo análisis en **SonarQube Cloud**, verificando q
 
 
 
-## 8. Conclusiones
+## 🧩 8. Conclusiones
 
-- El trabajo permitió consolidar la comprensión del ciclo de vida del software aplicado a pruebas, calidad y seguridad.
+El desarrollo de este proyecto permitió consolidar de manera práctica los conocimientos sobre el **Ciclo de Vida del Software**, aplicados a las áreas de **pruebas, calidad y seguridad**.  
 
-- Se comprobó el valor de las metodologías TDD y BDD para crear código robusto y comprobable.
+Se demostró la efectividad de las metodologías **TDD (Test Driven Development)** y **BDD (Behavior Driven Development)** para generar código más **robusto, mantenible y verificable**, fomentando un enfoque preventivo ante errores.  
 
-- El uso de herramientas automáticas como ESLint, Dependabot, CodeQL y SonarQube facilita el aseguramiento de la calidad y la detección temprana de vulnerabilidades.
+Asimismo, la integración de herramientas automatizadas como **ESLint**, **Dependabot**, **CodeQL** y **SonarQube Cloud** fortaleció los procesos de **aseguramiento de calidad**, facilitando la **detección temprana de vulnerabilidades**, la mejora de la mantenibilidad y el cumplimiento de buenas prácticas de desarrollo seguro.  
 
-- El control de versiones con Git y GitHub fue esencial para la colaboración y trazabilidad del proyecto.
+El uso de **Git y GitHub** resultó esencial para garantizar la **colaboración, trazabilidad y control de versiones**, optimizando la gestión del trabajo en equipo y la documentación de los avances.  
 
-- En conjunto, se logró un flujo de desarrollo alineado con las buenas prácticas de la industria, abarcando desde la planificación hasta la mejora continua.
+En conjunto, se logró un **flujo de desarrollo integral y alineado con los estándares de la industria**, abarcando desde la planificación y codificación hasta la validación, corrección y mejora continua del producto final.
+
 
 📘 Repositorio oficial del grupo:
 https://github.com/edoturb/AUY1102-001V-2025--G2
