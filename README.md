@@ -1,202 +1,326 @@
-# Github NPM Registry
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/logo_duoc.png?raw=true)
 
-## About this article
+<br clear="left"/>
 
-GitHub with GitHubActions and GHAS offer an incredible experience for developers around the planet. Just with a few considerations and good ideas we can build a wonderful experience for our development teams, and they just literally "work only on their code"
+# Evaluación Parcial 2  
+## Desarrollo de Pruebas Unitarias y Análisis de Seguridad II  
 
-## Using Github NPM Registry - Local Environment
+**Asignatura:** Ciclo de Vida del Software I – Sección 001V  
+**Integrantes:** Lucía Villalobos – Eduardo Urbina  
+**Docente:** Valentina Paz  
+**Fecha de entrega:** 09 de noviembre de 2025  
 
-### Authenticating to the NPM Registry
+---
 
-1. Setting your [access token](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages#about-scopes-and-permissions-for-package-registries), to enable GitHub functions like an OAuth access token and authenticates the access to the GitHub API.
+## 1. Objetivo de la evaluación
 
-    Select the ```read:packages``` scope to download container images and read their metadata.
+El propósito de esta evaluación es aplicar los conocimientos del ciclo de vida del software, centrando el trabajo en la creación, ejecución y análisis de pruebas unitarias, junto con la evaluación de seguridad mediante herramientas automáticas.  
+El proyecto integra los siguientes componentes:
 
-    Select the ```write:packages``` scope to download and upload container images and read and write their metadata.
+- Uso de **Git y GitHub** como herramientas de control de versiones.  
+- Implementación de **pruebas unitarias y de cobertura** con Jest.  
+- Aplicación de metodologías **TDD (Test Driven Development)** y **BDD (Behavior Driven Development)**.  
+- Ejecución de análisis de calidad con **ESLint**.  
+- Evaluación de vulnerabilidades con **Dependabot**, **CodeQL Analysis** y **SonarQube Cloud**.  
+- Aplicación de remediaciones y verificación posterior de seguridad.
 
-    Select the ```delete:packages``` scope to delete container images.
+---
 
-2. To authenticate by adding your personal access token to your ~/.npmrc file, edit the ~/.npmrc file for your project to include the following line, replacing TOKEN with your personal access token. Create a new ~/.npmrc file if one doesn't exist.
+## 2. Fase 1 – Control de versiones con Git y GitHub
 
-    ```
-    //npm.pkg.github.com/:_authToken=TOKEN
-    ```
-3. To authenticate by logging in to npm, use the ```npm login``` command, replacing USERNAME with your GitHub username, TOKEN with your personal access token, and PUBLIC-EMAIL-ADDRESS with your email address.
+### 2.1. Clonación y carga del repositorio
 
-If GitHub Packages is not your default package registry for using npm and you want to use the ```npm audit``` command, we recommend you use the ```--scope``` flag with the owner of the package when you authenticate to GitHub Packages.
+Se clonó el repositorio base proporcionado por la docente:
+```markdown
+```bash
+git clone https://github.com/Fundacion-Instituto-Profesional-Duoc-UC/AUY1102-Pipeline.git
+Posteriormente, se eliminó el historial .git del proyecto y se inicializó uno nuevo, agregando el repositorio del grupo:
+
+
+rm -rf .git
+git init
+git add .
+git commit -m "Versión inicial sin credenciales"
+git branch -M main
+git remote add origin https://github.com/edoturb/AUY1102-001V-2025--G2.git
+git push -u origin main --force
+```
+Clonación Edurado
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/f9ec2dfdc15447733f5ea6860508d091f8c1d0ad/Clonacion%20Edu.png)
+
+
+Clonación Lucia
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Clonacion%20Lucy.png?raw=true)
+
+
+Origin apunta al repo de la profe:
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote.png?raw=true)
+
+
+Borramos el origin actual:
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote%20-v.png?raw=true)
+
+
+Añade el remoto nuevo, del grupo:
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20remote%20add%20origin.png?raw=true)
+
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/git%20status.png?raw=true)
+
+Remonbramos rama master por main para tener buenas practias y más estándar
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/master%20a%20main.png?raw=true)
+
+No nos dejo hacer push porque dentro del commit hay un archivo **credentials.yml** con algo en la línea 1 que parece un token de GitHub”.
+
+Aunque ya borramos el .git viejo, en este nuevo commit todavía está ese credentials.yml con algo **sospechoso**.
+
+Sacaremos ese secreto del commit y recién ahí volvelveromos a hacer push.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/commit%20y%20push.png?raw=true)
+
+Con esto, el commit viejo (que tenía el supuesto secreto) deja de existir; ahora el último commit ya viene limpio.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen10.png?raw=true)
+
+(forced update) → el push forzado funcionó (reemplazó la historia anterior).
+
+No hay advertencias de secretos ni errores de protección 🚫🔑.
+Logramos subir correctamente el código base del proyecto a nuestro repositorio de grupo
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen11.png?raw=true)
+
+
+
+## 3. Fase 2 – Colaboración y control de cambios
+**Lucía Villalobos:** ejecución de pruebas unitarias, análisis de cobertura, configuración de ESLint y documentación (este README).
+
+**Eduardo Urbina:** configuración y ejecución de herramientas de seguridad (Dependabot, CodeQL, SonarQube) y aplicación de remediaciones.
+
+
+**3.1. Pruebas unitarias y cobertura de código**
+
+Instalación de dependencias:
+
+Se ejecutó el siguiente comando para instalar los paquetes necesarios.
+
+Durante la instalación, npm reportó varias vulnerabilidades en dependencias externas, lo cual permitió posteriormente aplicar herramientas de análisis y remediación.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen13.png?raw=true)
+
+**3.2. Ejecución de pruebas unitarias**
+
+Las pruebas unitarias fueron ejecutadas con Jest mediante:
+
+**npm run test:unit**
+
+Resultado general:
+
+- Test Suites: 10 passed / 10 total
+- Tests: 18 passed / 18 total
+- Incluye prueba personalizada sumar.test.ts.
+
+Durante la ejecución se detectaron advertencias relacionadas con fetch hacia api.example.com, sin impacto en la ejecución.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen14.png?raw=true)
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen15.png?raw=true)
+
+**3.3. Análisis de cobertura**
+
+Se midió la cobertura total del código con:
+
+**npm run test:coverage**
+
+Resultados obtenidos:
+
+- Statements: 43.28 %
+- Branches: 60 %
+- Functions: 56.66 %
+- Lines: 43.28 %
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen16.png?raw=true)
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen17.png?raw=true)
+
+Este reporte permitió identificar áreas del código sin cobertura de pruebas, apoyando la mejora continua del desarrollo.
+
+## 4. Fase 3 – Metodologías de prueba (TDD y BDD)
+
+**4.1. Ejemplo implementado**
+
+Se creó una función simple para ejemplificar TDD y BDD:
+
+```ts
+// src/sumar.ts
+export function sumar(a: number, b: number): number {
+  return a + b;
+}
+
+
+Y su prueba unitaria:
+
+
+// test/sumar.test.ts
+import { sumar } from "../src/sumar";
+
+describe("sumar()", () => {
+  // TDD: prueba definida antes de la implementación
+  it("debería devolver la suma de dos números", () => {
+    expect(sumar(2, 3)).toBe(5);
+  });
+
+  // BDD: descripción del comportamiento esperado
+  it("Given two positive numbers, when I call sumar, then I get their sum", () => {
+    expect(sumar(10, 5)).toBe(15);
+  });
+});
 
 ```
-  $ npm login --scope=@OWNER --registry=https://npm.pkg.github.com
-  > Username: USERNAME
-  > Password: TOKEN
-  > Email: PUBLIC-EMAIL-ADDRESS
-```
 
-### Pushing packages
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen18.png?raw=true)
 
-#### Publishing a package using a local .npmrc file
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen19.png?raw=true)
 
-You can use an .npmrc file to configure the scope mapping for your project. In the .npmrc file, use the GitHub Packages URL and account owner so GitHub Packages knows where to route package requests. Using an .npmrc file prevents other developers from accidentally publishing the package to npmjs.org instead of GitHub Packages.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen20.png?raw=true)
 
-1. Authenticate to GitHub Packages. For more information, see "[Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)."
-2. In the same directory as your ```package.json``` file, create or edit an ```.npmrc``` file to include a line specifying GitHub Packages URL and the account owner. Replace ```OWNER``` with the name of the user or organization account that owns the repository containing your project.
+**4.2. Corrimos nuevamente las pruebas**
 
-    ```
-    @OWNER:registry=https://npm.pkg.github.com
-    ```
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen20.png?raw=true)
 
-3. Add the .npmrc file to the repository where GitHub Packages can find your project. For more information, see "[Adding a file to a repository](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)."
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen21.png?raw=true)
 
-    **NOTE**: Include on [```.gitignore```](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files) the exclusion of .npmrc to not compromise security.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen22.png?raw=true)
 
-4. Verify the name of your package in your project's package.json. The name field must contain the scope and the ```name``` of the package. For example, if your package is called "test", and you are publishing to the "My-org" GitHub organization, the ```name``` field in your package.json should be ```@my-org/test```.
+**4.3. Análisis**
 
-5. Verify the repository field in your project's package.json. The ```repository``` field must match the URL for your GitHub ```repository```. For example, if your repository URL is ```github.com/my-org/test``` then the repository field should be ```https://github.com/my-org/test.git```.
+**TDD:** permitió diseñar el código guiado por las pruebas, aplicando el ciclo Red → Green → Refactor.
 
-6. Publish the package:
+**BDD:** permitió expresar el comportamiento esperado en un lenguaje más cercano al negocio.
 
-    ```
-    $ npm publish
-    ```
+Ambos enfoques promueven un desarrollo más confiable y orientado a calidad.
 
-#### Publishing a package using publishConfig in the package.json file
+## 5. Fase 4 – Análisis de calidad del código (ESLint)
+Se utilizó ESLint para revisar la calidad del código:
 
-You can use ```publishConfig``` element in the package.json file to specify the registry where you want the package published. For more information, see "[publishConfig](https://docs.npmjs.com/files/package.json#publishconfig)" in the npm documentation.
+npx eslint .
+Inicialmente, se presentó el error:
 
-1. Edit the package.json file for your package and include a ```publishConfig``` entry.
+ESLint couldn't find the config "airbnb-typescript/base" to extend from.
 
-```
-"publishConfig": {
-  "registry":"https://npm.pkg.github.com"
-},
-```
+Para resolverlo, se instalaron las dependencias necesarias:
 
-2. Verify the ```repository``` field in your project's package.json. The ```repository``` field must match the URL for your GitHub repository. For example, if your repository URL is ```github.com/my-org/test``` then the repository field should be ```https://github.com/my-org/test.git```
+npm install -D eslint eslint-config-airbnb-typescript eslint-config-airbnb-base eslint-plugin-import @typescript-eslint/eslint-plugin @typescript-eslint/parser
+Aun así, la configuración continuó arrojando advertencias, pero permitió comprender el propósito del análisis estático de código en el ciclo de desarrollo.
 
-3. Publish the package:
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen41.png?raw=true)
 
-      ```
-      $ npm publish
-      ```
-To discover every way to working with [NPM Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) please generete and **ISSUE**.
+## 6. Fase 5 – Análisis de vulnerabilidades y seguridad
 
-<br>
+**6.1. Dependabot**
 
-## Using Github Container Registry - Github Action
-<br>
+Se habilitaron Dependabot Alerts y Security Updates en GitHub, generando reportes automáticos de vulnerabilidades en las dependencias del proyecto.
 
-```
-name: Create and publish NPM Package
-on:
-  release:
-    types: [published]
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen23.png?raw=true)
 
-jobs:
-  Publish-NPM-Package:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache-dependency-path: package-lock.json
-          registry-url: https://npm.pkg.github.com
-      - run: npm install
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.PAT_GITHUB_TOKEN}}
-```
-```
-name: NPM Audit
-on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen24.png?raw=true)
 
-jobs:
-  npm-audit:
-    name: npm audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: install dependencies
-        run: npm ci
-      - uses: oke-py/npm-audit-action@v2
-        with:
-          audit_level: moderate
-          github_token: ${{ secrets.PAT_GITHUB_TOKEN }}
-          issue_assignees: oke-py
-          issue_labels: vulnerability,test
-          dedupe_issues: true
-```
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen25.png?raw=true)
 
-To enable more capabilities and demostrate the strongest of Github and Github Actions we complement this example with [Github Reusable Workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows) using Open Source Tools and Enterprise Tools on Actions.
 
-Reusing workflows avoids duplication. This makes workflows easier to maintain and allows you to create new workflows more quickly by building on the work of others, just as you do with actions. Workflow reuse also promotes best practice by helping you to use workflows that are well designed, have already been tested, and have been proved to be effective. Your organization can build up a library of reusable workflows that can be centrally maintained.
 
-**Note:** To enable your actions, in some cases you must configurate [encrypted secrets](https://docs.github.com/en/enterprise-cloud@latest/actions/security-guides/encrypted-secrets)
 
-<br>
 
-```
-name: Github Reusable Workflow
-on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
-  release:
-    types: [published]
+**6.2. CodeQL Analysis**
 
-jobs:
-  NPM-Audit:
-    if: github.event_name != 'opened'
-    uses: ./.github/workflows/npm-audit.yml
-    secrets:
-      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
-  
-  NPM-Publish:
-    if: ${{ (github.event.release.action == 'released') && always() }}
-    uses: ./.github/workflows/npm-registry.yml
-    needs: [NPM-Audit]
-    secrets:
-      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
-```
-<br>
+Configuramos CodeQL desde la pestaña Security 
 
-## 4 – Análisis de vulnerabilidades
+→ Code scanning, generando análisis automáticos en cada push.
 
-Herramientas utilizadas:
-- **Dependabot**: se habilitaron alerts y security updates para monitorear dependencias de npm.
-- **CodeQL**: se configuró code scanning para analizar el código TypeScript/JavaScript.
-- **Snyk**: se vinculó el repositorio y se ejecutó un escaneo de vulnerabilidades.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen26.png?raw=true)
 
-Principales hallazgos:
-- Paquetes desactualizados y con vulnerabilidades de severidad *low*, *moderate* y *high*.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen%2027.png?raw=true)
 
-### Remediaciones realizadas
+Nueva configuración lista
 
-- Se aceptó un PR de Dependabot que actualiza la dependencia `XYZ` a una versión segura.
-- Se volvió a ejecutar el análisis, reduciendo el número de vulnerabilidades reportadas.
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen28.png?raw=true)
 
-<br>
+Se configuró GitHub CodeQL para análisis automatizado del código fuente.
+El flujo realiza escaneos cada 1 hora. Se activo Dependabot alerts y security updates
 
-## License
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen%2029.png?raw=true)
 
-The scripts and documentation in this project are released under the [MIT License](./LICENSE)
-## Contributions
 
-Contributions are welcome! read our [Contributor's Guide](./docs/CONTRIBUTING.md)
 
-## Code of Conduct
 
-👋 Be nice. See our [code of conduct](./docs/code_of_conduct.md)
+**6.3. SonarQube Cloud**
 
-## References
+Configuramos SonarQube Cloud, integrando el repositorio con un análisis externo de vulnerabilidades y calidad de código.
 
-+ **NPM Publish:** https://github.com/actions/setup-node
-+ **NPM Audit Signatures:** https://github.blog/changelog/2022-07-26-a-new-npm-audit-signatures-command-to-verify-npm-package-integrity/
-+ **NPM Audit:** https://github.com/marketplace/actions/npm-audit-action
+El análisis detectó vulnerabilidades de severidad medium y low, además de recomendaciones de estilo y complejidad.
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen30.png?raw=true
+)
+
+Vulnerabilidades detectadas
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen31.png?raw=true)
+
+Detecta una critica, token en archivo npm
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen32.png?raw=true)
+
+Eliminamos Token sensible  desde archivo .npmrc
+
+![image alt](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen33.png?raw=true)
+
+
+Tras la detección de las vulnerabilidades y problemas de mantenibilidad, se procedió a aplicar las siguientes **acciones correctivas** para mejorar la calidad y seguridad del proyecto:
+
+### **7.1. Revocación y reemplazo del token de GitHub**
+Se revocó el token comprometido y se generó un nuevo **Personal Access Token (PAT)** desde la configuración de GitHub, eliminando toda referencia al anterior.  
+El nuevo token fue almacenado de forma segura mediante una variable de entorno en el archivo `~/.zshrc`, siguiendo las buenas prácticas de seguridad recomendadas.
+
+- ![Generación de nuevo token en GitHub](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen35.png?raw=true)
+- ![Configuración del token como variable de entorno](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen36.png?raw=true)
+
+### **7.2. Limpieza del archivo `.npmrc`**
+Se eliminó la línea que contenía el token expuesto y se reemplazó por una configuración segura sin credenciales directas.  
+Esto permitió eliminar la alerta de seguridad clasificada como **Blocker**.
+
+- ![Archivo .npmrc corregido](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen34.png?raw=true)
+
+### **7.3. Corrección de métodos vacíos (Code Smells)**
+En el archivo `src/quality/errores-object.ts`, SonarQube marcó los métodos `getUserData()` y `sendEmail()` como vacíos.  
+Para resolver el problema, se agregó un comentario `//TODO` dentro del método, dejando explícita la intención de implementación futura. Esto elimina el error sin afectar la lógica del programa.
+
+- ![Corrección de métodos vacíos](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen39.png?raw=true)
+- ![Commit de remediación](https://github.com/edoturb/AUY1102-001V-2025--G2/blob/main/Evidencias/Imagen40.png?raw=true)
+
+### **7.4. Confirmación de remediaciones**
+Finalmente, se ejecutó un nuevo análisis en **SonarQube Cloud**, verificando que las vulnerabilidades críticas habían sido mitigadas y las observaciones de mantenibilidad disminuidas, cumpliendo así con las políticas de calidad establecidas en el proyecto.
+
+
+
+## 🧩 8. Conclusiones
+
+El desarrollo de este proyecto permitió consolidar de manera práctica los conocimientos sobre el **Ciclo de Vida del Software**, aplicados a las áreas de **pruebas, calidad y seguridad**.  
+
+Se demostró la efectividad de las metodologías **TDD (Test Driven Development)** y **BDD (Behavior Driven Development)** para generar código más **robusto, mantenible y verificable**, fomentando un enfoque preventivo ante errores.  
+
+Asimismo, la integración de herramientas automatizadas como **ESLint**, **Dependabot**, **CodeQL** y **SonarQube Cloud** fortaleció los procesos de **aseguramiento de calidad**, facilitando la **detección temprana de vulnerabilidades**, la mejora de la mantenibilidad y el cumplimiento de buenas prácticas de desarrollo seguro.  
+
+El uso de **Git y GitHub** resultó esencial para garantizar la **colaboración, trazabilidad y control de versiones**, optimizando la gestión del trabajo en equipo y la documentación de los avances.  
+
+En conjunto, se logró un **flujo de desarrollo integral y alineado con los estándares de la industria**, abarcando desde la planificación y codificación hasta la validación, corrección y mejora continua del producto final.
+
+
+📘 Repositorio oficial del grupo:
+https://github.com/edoturb/AUY1102-001V-2025--G2
+
+
