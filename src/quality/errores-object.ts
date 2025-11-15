@@ -11,5 +11,7 @@ class UserService {
   getUserData() {}
   //TODO
 
-  sendEmail() {}
+  sendEmail() {
+    //TODO
+  }
 }
