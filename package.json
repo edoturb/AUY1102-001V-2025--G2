@@ -117,6 +117,6 @@
   },
   "dependencies": {
     "chokidar": "^2.0.3",
-    "cosmiconfig": "^6.0.0"
+    "cosmiconfig": "^9.0.0"
   }
 }
