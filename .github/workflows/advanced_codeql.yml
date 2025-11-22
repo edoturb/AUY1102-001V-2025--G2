@@ -1,0 +1,281 @@
+name: "Advanced CodeQL Security Analysis with Dependencies"
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Permite ejecución manual
+
+# Variables de entorno globales
+env:
+  NODE_VERSION: '18'
+  CODEQL_LANGUAGES: 'javascript-typescript'
+
+jobs:
+  # Job 1: Preparación y validación inicial
+  preparation:
+    name: Preparation and Setup
+    runs-on: ubuntu-latest
+    outputs:
+      should-scan: ${{ steps.check.outputs.should-scan }}
+      languages: ${{ steps.check.outputs.languages }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Obtener historial completo para análisis
+
+      - name: Check if security scan is needed
+        id: check
+        run: |
+          echo "Checking repository for security scan requirements..."
+          
+          # Verificar si hay archivos JavaScript/TypeScript
+          if find . -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | head -1 | grep -q .; then
+            echo "should-scan=true" >> $GITHUB_OUTPUT
+            echo "languages=javascript-typescript" >> $GITHUB_OUTPUT
+            echo "✅ Found JS/TS files - security scan will proceed"
+          else
+            echo "should-scan=false" >> $GITHUB_OUTPUT
+            echo "❌ No JS/TS files found - skipping security scan"
+          fi
+
+      - name: Repository statistics
+        run: |
+          echo "📊 Repository Statistics:"
+          echo "Total files: $(find . -type f | wc -l)"
+          echo "JS/TS files: $(find . -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | wc -l)"
+          echo "JSON files: $(find . -name "*.json" | wc -l)"
+
+  # Job 2: Análisis de dependencias (depende de preparation)
+  dependency-analysis:
+    name: Dependency Security Analysis
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.should-scan == 'true'
+    continue-on-error: true  # No bloquea si encuentra vulnerabilidades
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        id: audit
+        run: |
+          echo "🔍 Running npm security audit..."
+          npm audit --audit-level=moderate --json > audit-report.json || true
+          
+          # Mostrar resumen de vulnerabilidades
+          if [ -s audit-report.json ]; then
+            echo "audit-found=true" >> $GITHUB_OUTPUT
+            echo "📋 Security audit completed - check audit-report.json for details"
+          else
+            echo "audit-found=false" >> $GITHUB_OUTPUT
+            echo "✅ No security vulnerabilities found in dependencies"
+          fi
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependency-audit-report
+          path: audit-report.json
+          retention-days: 7
+
+  # Job 3: CodeQL Analysis (depende de preparation y dependency-analysis)
+  codeql-analysis:
+    name: CodeQL Security Scanning
+    runs-on: ubuntu-latest
+    needs: [preparation, dependency-analysis]
+    if: always() && needs.preparation.outputs.should-scan == 'true'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false  # Continúa con otros lenguajes si uno falla
+      matrix:
+        language: [ 'javascript-typescript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        # Configuración de queries personalizadas
+        queries: security-extended,security-and-quality
+        config: |
+          disable-default-rules: false
+          queries:
+            - uses: security-extended
+            - uses: security-and-quality
+
+    - name: Setup build environment
+      if: matrix.language == 'javascript-typescript'
+      run: |
+        echo "Setting up Node.js environment for analysis..."
+        if [ -f "package.json" ]; then
+          npm ci || echo "Failed to install dependencies, continuing with analysis"
+        fi
+
+    - name: Perform CodeQL Analysis
+      id: analyze
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"
+        upload: true
+      continue-on-error: false  # CodeQL debe completarse exitosamente
+
+    - name: Analysis summary
+      if: always()
+      run: |
+        if [ "${{ steps.analyze.outcome }}" == "success" ]; then
+          echo "✅ CodeQL analysis completed successfully"
+        else
+          echo "❌ CodeQL analysis encountered issues"
+        fi
+
+  # Job 4: Secret Scanning complementario (independiente, puede fallar)
+  secret-scanning:
+    name: Additional Secret Scanning
+    runs-on: ubuntu-latest
+    needs: preparation
+    if: needs.preparation.outputs.should-scan == 'true'
+    continue-on-error: true  # No es crítico si falla
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Custom secret patterns scan
+        run: |
+          echo "🔍 Scanning for additional secret patterns..."
+          
+          # Buscar patrones comunes de secretos
+          patterns=(
+            "password\s*=\s*['\"][^'\"]*['\"]"
+            "api[_-]?key\s*=\s*['\"][^'\"]*['\"]"
+            "secret\s*=\s*['\"][^'\"]*['\"]"
+            "token\s*=\s*['\"][^'\"]*['\"]"
+          )
+          
+          found_secrets=false
+          for pattern in "${patterns[@]}"; do
+            if grep -r -i -E "$pattern" --include="*.js" --include="*.ts" --include="*.json" . 2>/dev/null; then
+              echo "⚠️  Potential secret pattern found: $pattern"
+              found_secrets=true
+            fi
+          done
+          
+          if [ "$found_secrets" = false ]; then
+            echo "✅ No obvious secret patterns detected"
+          fi
+
+      - name: Check for hardcoded URLs and endpoints
+        run: |
+          echo "🌐 Checking for hardcoded URLs and API endpoints..."
+          grep -r -i -E "https?://[^'\">\s]+" --include="*.js" --include="*.ts" . | head -10 || echo "No hardcoded URLs found"
+
+  # Job 5: Security Report consolidado (depende de todos los anteriores)
+  security-report:
+    name: Consolidated Security Report
+    runs-on: ubuntu-latest
+    needs: [preparation, dependency-analysis, codeql-analysis, secret-scanning]
+    if: always() && needs.preparation.outputs.should-scan == 'true'
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: security-reports
+
+      - name: Generate consolidated report
+        run: |
+          echo "# 🔒 Security Analysis Report" > security-summary.md
+          echo "Generated on: $(date)" >> security-summary.md
+          echo "" >> security-summary.md
+          
+          echo "## Job Results:" >> security-summary.md
+          echo "- Preparation: ${{ needs.preparation.result }}" >> security-summary.md
+          echo "- Dependency Analysis: ${{ needs.dependency-analysis.result }}" >> security-summary.md
+          echo "- CodeQL Analysis: ${{ needs.codeql-analysis.result }}" >> security-summary.md
+          echo "- Secret Scanning: ${{ needs.secret-scanning.result }}" >> security-summary.md
+          echo "" >> security-summary.md
+          
+          # Evaluar estado general
+          if [ "${{ needs.codeql-analysis.result }}" == "success" ]; then
+            echo "## ✅ Overall Status: PASSED" >> security-summary.md
+            echo "CodeQL analysis completed successfully." >> security-summary.md
+          else
+            echo "## ❌ Overall Status: NEEDS ATTENTION" >> security-summary.md
+            echo "CodeQL analysis requires review." >> security-summary.md
+          fi
+          
+          echo "" >> security-summary.md
+          echo "## Additional Notes:" >> security-summary.md
+          if [ "${{ needs.dependency-analysis.result }}" != "success" ]; then
+            echo "- Dependency analysis found potential issues" >> security-summary.md
+          fi
+          if [ "${{ needs.secret-scanning.result }}" != "success" ]; then
+            echo "- Additional secret scanning completed with warnings" >> security-summary.md
+          fi
+          
+          echo "Report generated successfully"
+          cat security-summary.md
+
+      - name: Upload consolidated report
+        uses: actions/upload-artifact@v3
+        with:
+          name: consolidated-security-report
+          path: security-summary.md
+
+  # Job 6: Notificación (siempre se ejecuta para informar resultados)
+  notification:
+    name: Security Analysis Notification
+    runs-on: ubuntu-latest
+    needs: [preparation, dependency-analysis, codeql-analysis, secret-scanning, security-report]
+    if: always()
+    steps:
+      - name: Notify completion
+        run: |
+          echo "🚨 Security Analysis Workflow Completed"
+          echo "================================================"
+          
+          if [ "${{ needs.preparation.outputs.should-scan }}" == "true" ]; then
+            echo "✅ Security scan was performed"
+            echo "📊 Results summary:"
+            echo "   - Preparation: ${{ needs.preparation.result }}"
+            echo "   - Dependency Analysis: ${{ needs.dependency-analysis.result }}"
+            echo "   - CodeQL Analysis: ${{ needs.codeql-analysis.result }}"
+            echo "   - Secret Scanning: ${{ needs.secret-scanning.result }}"
+            echo "   - Security Report: ${{ needs.security-report.result }}"
+            
+            # Determinar si hay problemas críticos
+            if [ "${{ needs.codeql-analysis.result }}" == "success" ]; then
+              echo "🟢 OVERALL STATUS: SECURITY SCAN PASSED"
+            else
+              echo "🔴 OVERALL STATUS: SECURITY ISSUES DETECTED"
+              echo "Please review the CodeQL results in the Security tab"
+            fi
+          else
+            echo "⏭️  Security scan was skipped (no relevant files found)"
+          fi
+          
+          echo "================================================"
+          echo "View detailed results in:"
+          echo "- Actions tab: Workflow execution logs"
+          echo "- Security tab: CodeQL findings" 
+          echo "- Artifacts: Detailed reports"
