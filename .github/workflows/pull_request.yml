@@ -3,6 +3,7 @@ name: Typescript for Pull Requests
 on:
   pull_request:
     branches:
+      - main
       - master
 
 jobs:
