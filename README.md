@@ -10,6 +10,9 @@
 **Docente:** Valentina Paz  
 **Fecha de entrega:** 09 de noviembre de 2025  
 
+### 🚀 GitHub Actions Testing
+Este repositorio incluye configuración de GitHub Actions para testing automático en pull requests.  
+
 ---
 
 ## 1. Objetivo de la evaluación
