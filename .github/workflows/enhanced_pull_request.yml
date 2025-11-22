@@ -1,0 +1,204 @@
+name: Enhanced Pull Request Testing
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+
+# Configuración global para todos los jobs
+env:
+  NODE_VERSION: '18'
+  CI: true
+
+jobs:
+  # Job 1: Verificación inicial y setup
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      node-version: ${{ steps.setup.outputs.node-version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js and cache
+        id: setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify installation
+        run: |
+          echo "node-version=$(node --version)" >> $GITHUB_OUTPUT
+          echo "npm-version=$(npm --version)"
+          echo "Dependencies installed successfully"
+
+  # Job 2: Linting (depende de setup)
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    continue-on-error: false # El linting debe pasar
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+        
+      - name: Check formatting
+        run: |
+          npm run format
+          if ! git diff --exit-code; then
+            echo "❌ Code is not properly formatted"
+            echo "Run 'npm run format' to fix formatting issues"
+            exit 1
+          else
+            echo "✅ Code formatting is correct"
+          fi
+
+  # Job 3: Unit Tests (depende de setup)
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        test-type: [unit, coverage]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: |
+          if [ "${{ matrix.test-type }}" == "unit" ]; then
+            npm run test:unit
+          else
+            npm run test:coverage
+          fi
+
+      - name: Upload coverage (if coverage test)
+        if: matrix.test-type == 'coverage'
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/
+
+  # Job 4: Build (depende de lint y test exitosos)
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Verify build
+        run: |
+          if [ -d "dist" ]; then
+            echo "✅ Build successful - dist directory created"
+            ls -la dist/
+          else
+            echo "❌ Build failed - no dist directory found"
+            exit 1
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  # Job 5: Security audit (independiente, puede fallar)
+  security-audit:
+    runs-on: ubuntu-latest
+    needs: setup
+    continue-on-error: true # No bloquea el workflow si encuentra vulnerabilidades
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: |
+          echo "🔍 Running security audit..."
+          npm audit --audit-level=moderate || echo "⚠️ Security vulnerabilities found"
+          
+      - name: Generate security report
+        if: always()
+        run: |
+          npm audit --json > security-report.json || true
+          echo "Security audit completed. Check the report for details."
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-report
+          path: security-report.json
+
+  # Job 6: Final validation (se ejecuta siempre para reportar el estado)
+  final-status:
+    runs-on: ubuntu-latest
+    needs: [setup, lint, test, build, security-audit]
+    if: always()
+    steps:
+      - name: Report final status
+        run: |
+          echo "🔍 Final Status Report:"
+          echo "Setup: ${{ needs.setup.result }}"
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Test: ${{ needs.test.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Security Audit: ${{ needs.security-audit.result }}"
+          
+          if [ "${{ needs.setup.result }}" == "success" ] && 
+             [ "${{ needs.lint.result }}" == "success" ] && 
+             [ "${{ needs.test.result }}" == "success" ] && 
+             [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ All critical jobs completed successfully!"
+            echo "Note: Security audit result: ${{ needs.security-audit.result }}"
+          else
+            echo "❌ Some critical jobs failed"
+            exit 1
+          fi

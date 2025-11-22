@@ -1,0 +1,81 @@
+name: Error Handling and Job Dependencies Demo
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # Permite ejecución manual
+
+jobs:
+  # Job que puede fallar pero no detiene el workflow
+  flaky-job:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Potentially failing step
+        run: |
+          echo "This job might fail but won't stop the workflow"
+          # Simular un fallo ocasional
+          if [ $((RANDOM % 2)) -eq 0 ]; then
+            echo "❌ Simulated failure"
+            exit 1
+          else
+            echo "✅ Success this time"
+          fi
+
+  # Job crítico que debe ejecutarse
+  critical-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Critical operation
+        run: echo "This is a critical operation that must succeed"
+
+  # Job que depende del crítico pero no del flaky
+  dependent-job:
+    runs-on: ubuntu-latest
+    needs: critical-job
+    # No depende de flaky-job, así que se ejecuta aunque flaky-job falle
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Operation depending on critical job
+        run: echo "This runs only if critical-job succeeds"
+
+  # Job que se ejecuta siempre, independientemente de fallos
+  cleanup-job:
+    runs-on: ubuntu-latest
+    needs: [flaky-job, critical-job, dependent-job]
+    if: always() # Se ejecuta siempre, sin importar el resultado de los jobs previos
+    steps:
+      - name: Cleanup operation
+        run: |
+          echo "Cleanup running regardless of previous job results"
+          echo "Flaky job result: needs.flaky-job.result = ${{ needs.flaky-job.result }}"
+          echo "Critical job result: needs.critical-job.result = ${{ needs.critical-job.result }}"
+          echo "Dependent job result: needs.dependent-job.result = ${{ needs.dependent-job.result }}"
+
+  # Job que solo se ejecuta si todos los anteriores fueron exitosos
+  success-only-job:
+    runs-on: ubuntu-latest
+    needs: [flaky-job, critical-job, dependent-job]
+    if: success() # Solo se ejecuta si todos los jobs previos fueron exitosos
+    steps:
+      - name: Success celebration
+        run: echo "🎉 All jobs completed successfully!"
+
+  # Job que solo se ejecuta si alguno falló
+  failure-handler-job:
+    runs-on: ubuntu-latest
+    needs: [flaky-job, critical-job, dependent-job]
+    if: failure() # Solo se ejecuta si algún job previo falló
+    steps:
+      - name: Handle failures
+        run: echo "🚨 Some jobs failed, handling the situation"
