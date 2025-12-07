@@ -321,6 +321,7 @@ En conjunto, se logró un **flujo de desarrollo integral y alineado con los est�
 
 <!-- Actualización para prueba de CI/CD -->
 esto es solo test
+test Skyn 
 
 
 📘 Repositorio oficial del grupo:
