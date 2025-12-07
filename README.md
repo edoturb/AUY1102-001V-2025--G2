@@ -319,6 +319,8 @@ El uso de **Git y GitHub** resultó esencial para garantizar la **colaboración,
 
 En conjunto, se logró un **flujo de desarrollo integral y alineado con los estándares de la industria**, abarcando desde la planificación y codificación hasta la validación, corrección y mejora continua del producto final.
 
+<!-- Actualización para prueba de CI/CD -->
+
 
 📘 Repositorio oficial del grupo:
 https://github.com/edoturb/AUY1102-001V-2025--G2
