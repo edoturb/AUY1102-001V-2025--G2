@@ -1,0 +1,49 @@
+name: Snyk Security Scan
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  snyk:
+    name: Escaneo de dependencias y secretos con Snyk
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # necesario para subir resultados a GitHub Advanced Security
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Instalar Snyk CLI
+        run: npm install -g snyk
+
+      - name: Autenticarse con Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Escanear dependencias
+        run: snyk test --all-projects --sarif-file-output=snyk-results.sarif || true
+
+      - name: Escanear secretos
+        run: snyk code test --sarif --output=snyk-code.sarif || true
+
+      - name: Subir resultados a GitHub Advanced Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-results.sarif
+
+      - name: Subir resultados de escaneo de secretos
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-code.sarif
