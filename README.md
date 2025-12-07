@@ -322,7 +322,7 @@ En conjunto, se logró un **flujo de desarrollo integral y alineado con los est�
 <!-- Actualización para prueba de CI/CD -->
 esto es solo test
 test Skyn 
-
+test dentro del contenedor
 
 📘 Repositorio oficial del grupo:
 https://github.com/edoturb/AUY1102-001V-2025--G2
