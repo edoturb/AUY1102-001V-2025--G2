@@ -1,7 +1,14 @@
-FROM node:14-alpine3.16
+FROM python:3.11-slim
 
+# 1) Carpeta de trabajo dentro del contenedor
+WORKDIR /usr/src/app
+
+# 2) Copiar primero los archivos del proyecto
 COPY . .
 
-WORKDIR /usr/src/app/
+# 3) Instalar pytest (y otras dependencias si las hubiera)
+RUN pip install --no-cache-dir pytest
 
-RUN npm version
+# 4) Comando por defecto: ejecutar los tests
+CMD ["pytest", "-q"]
+

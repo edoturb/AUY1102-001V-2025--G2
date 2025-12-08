@@ -2,7 +2,7 @@ name: CI/CD Prueba 3 Ciclo de Vida del Software
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -47,3 +47,12 @@ jobs:
         if: github.event_name == 'push'
         run: |
           docker push $IMAGE_NAME:${{ github.sha }}
+
+      - name: Analizar código con SonarCloud
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
